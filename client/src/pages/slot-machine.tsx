@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Confetti from "react-confetti";
 import { EmotiReel } from "@/components/game/EmotiReel";
 import { SpinButton } from "@/components/game/SpinButton";
 import { ScoreDisplay } from "@/components/game/ScoreDisplay";
@@ -9,19 +10,28 @@ import { useToast } from "@/hooks/use-toast";
 import useSound from "use-sound";
 
 export default function SlotMachine() {
-  const [reels, setReels] = useState(["🎰", "🎰", "🎰"]);
+  const [reels, setReels] = useState(["✨", "✨", "✨"]);
   const [isSpinning, setIsSpinning] = useState(false);
   const [score, setScore] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [showConfetti, setShowConfetti] = useState(false);
   const { toast } = useToast();
-  
-  const [playSpinSound] = useSound("/sounds/spin.mp3", { volume: 0.5 });
-  const [playWinSound] = useSound("/sounds/win.mp3", { volume: 0.5 });
+
+  const [playSpinSound] = useSound("/sounds/spin.mp3", { 
+    volume: 0.5,
+    soundEnabled 
+  });
+  const [playWinSound] = useSound("/sounds/win.mp3", { 
+    volume: 0.5,
+    soundEnabled 
+  });
 
   const spin = async () => {
     if (isSpinning) return;
-    
-    if (soundEnabled) playSpinSound();
+
+    if (soundEnabled) {
+      playSpinSound();
+    }
     setIsSpinning(true);
 
     setTimeout(() => {
@@ -31,8 +41,13 @@ export default function SlotMachine() {
 
       const winAmount = checkWin(newReels);
       if (winAmount > 0) {
-        if (soundEnabled) playWinSound();
+        if (soundEnabled) {
+          playWinSound();
+        }
         setScore(prev => prev + winAmount);
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 4000);
+
         toast({
           title: "Winner!",
           description: `You won ${winAmount} points!`,
@@ -43,6 +58,8 @@ export default function SlotMachine() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex flex-col items-center justify-center p-4">
+      {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -62,7 +79,7 @@ export default function SlotMachine() {
               <EmotiReel key={i} emoji={emoji} isSpinning={isSpinning} />
             ))}
           </div>
-          
+
           <div className="flex justify-center">
             <SpinButton onClick={spin} disabled={isSpinning} />
           </div>
