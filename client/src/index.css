@@ -23,3 +23,21 @@
     --angle: 360deg;
   }
 }
+
+.ring-\[conic-gradient\(from_var\(--angle\)\,gold\,yellow\,gold\)\] {
+  position: relative;
+}
+
+.ring-\[conic-gradient\(from_var\(--angle\)\,gold\,yellow\,gold\)\]::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: conic-gradient(from var(--angle), gold, yellow, gold);
+  border-radius: 0.75rem;
+  animation: spin 3s linear infinite;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
