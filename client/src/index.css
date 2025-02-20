@@ -11,3 +11,15 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin {
+  to {
+    --angle: 360deg;
+  }
+}

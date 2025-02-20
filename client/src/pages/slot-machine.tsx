@@ -28,14 +28,14 @@ export default function SlotMachine() {
       setReels(newReels);
       setIsSpinning(false);
 
-      const winAmount = checkWin(newReels);
-      if (winAmount > 0) {
+      const isJackpot = newReels.every(emoji => emoji === "🤩");
+      if (isJackpot) {
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 4000);
 
         toast({
-          title: "Winner!",
-          description: `You won ${winAmount} points!`,
+          title: "🎉 Jackpot! 🎉",
+          description: "Congratulations! You hit the jackpot!",
         });
       }
     }, 1500);
@@ -60,7 +60,7 @@ export default function SlotMachine() {
   const hasMatch = !isSpinning && reels[0] === reels[1] && reels[1] === reels[2] && hasSpunOnce;
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-4 select-none">
       {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
 
       <motion.div
@@ -72,7 +72,7 @@ export default function SlotMachine() {
           className="text-4xl font-semibold text-center mb-8 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent cursor-pointer"
           onClick={handleTitleClick}
         >
-          Emoji Slots
+          The Emoji Machine
         </h1>
 
         {showDevMenu && (
