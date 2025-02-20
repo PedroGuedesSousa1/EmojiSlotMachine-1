@@ -4,6 +4,7 @@ import Confetti from "react-confetti";
 import { EmotiReel } from "@/components/game/EmotiReel";
 import { SpinButton } from "@/components/game/SpinButton";
 import { DevMenu } from "@/components/game/DevMenu";
+import { AboutDialog } from "@/components/game/AboutDialog";
 import { getCheatReels, checkWin } from "@/lib/game";
 import { useToast } from "@/hooks/use-toast";
 
@@ -28,14 +29,24 @@ export default function SlotMachine() {
       setReels(newReels);
       setIsSpinning(false);
 
-      const isJackpot = newReels.every(emoji => emoji === "🤩");
+      // Check for wins
+      const isMatch = newReels[0] === newReels[1] && newReels[1] === newReels[2];
+      const isJackpot = isMatch && newReels[0] === "🤩";
+
       if (isJackpot) {
         setShowConfetti(true);
+        // More confetti pieces for jackpot
         setTimeout(() => setShowConfetti(false), 4000);
-
         toast({
-          title: "🎉 Jackpot! 🎉",
-          description: "Congratulations! You hit the jackpot!",
+          title: "🎉 JACKPOT! 🎉",
+          description: "Incredible! You've hit the legendary jackpot!",
+        });
+      } else if (isMatch) {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 3000);
+        toast({
+          title: "🎯 Match!",
+          description: `Congratulations! You matched three ${newReels[0]}!`,
         });
       }
     }, 1500);
@@ -57,11 +68,22 @@ export default function SlotMachine() {
     setShowConfetti(false);
   };
 
-  const hasMatch = !isSpinning && reels[0] === reels[1] && reels[1] === reels[2] && hasSpunOnce;
-
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-4 select-none">
-      {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
+      {showConfetti && (
+        <Confetti
+          recycle={false}
+          numberOfPieces={reels[0] === "🤩" ? 500 : 200}
+          confettiSource={{
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2,
+            w: 0,
+            h: 0
+          }}
+        />
+      )}
+
+      <AboutDialog />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -90,7 +112,7 @@ export default function SlotMachine() {
                 key={i} 
                 emoji={emoji} 
                 isSpinning={isSpinning} 
-                hasMatch={hasMatch}
+                hasMatch={false}
               />
             ))}
           </div>
