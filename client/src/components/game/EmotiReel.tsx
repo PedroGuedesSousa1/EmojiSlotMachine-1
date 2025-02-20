@@ -9,7 +9,7 @@ interface EmotiReelProps {
 export function EmotiReel({ emoji, isSpinning, hasMatch }: EmotiReelProps) {
   return (
     <motion.div
-      className={`w-24 h-24 bg-white rounded-xl shadow-lg flex items-center justify-center text-4xl select-none
+      className={`relative w-24 h-24 bg-white rounded-xl shadow-lg flex items-center justify-center text-4xl select-none
         ${hasMatch ? 'ring-[conic-gradient(from_var(--angle),gold,yellow,gold)]' : ''}`}
       animate={{
         y: isSpinning ? [0, -20, 0] : 0,
