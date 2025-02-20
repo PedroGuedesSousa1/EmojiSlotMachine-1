@@ -1,37 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import { EmotiReel } from "@/components/game/EmotiReel";
 import { SpinButton } from "@/components/game/SpinButton";
-import { ScoreDisplay } from "@/components/game/ScoreDisplay";
-import { SettingsPanel } from "@/components/game/SettingsPanel";
 import { getRandomEmoji, checkWin } from "@/lib/game";
 import { useToast } from "@/hooks/use-toast";
-import useSound from "use-sound";
 
 export default function SlotMachine() {
   const [reels, setReels] = useState(["✨", "✨", "✨"]);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [score, setScore] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(true);
   const [showConfetti, setShowConfetti] = useState(false);
   const { toast } = useToast();
-
-  const [playSpinSound] = useSound("/sounds/spin.mp3", { 
-    volume: 0.5,
-    soundEnabled 
-  });
-  const [playWinSound] = useSound("/sounds/win.mp3", { 
-    volume: 0.5,
-    soundEnabled 
-  });
 
   const spin = async () => {
     if (isSpinning) return;
 
-    if (soundEnabled) {
-      playSpinSound();
-    }
     setIsSpinning(true);
 
     setTimeout(() => {
@@ -41,10 +24,6 @@ export default function SlotMachine() {
 
       const winAmount = checkWin(newReels);
       if (winAmount > 0) {
-        if (soundEnabled) {
-          playWinSound();
-        }
-        setScore(prev => prev + winAmount);
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 4000);
 
@@ -57,7 +36,7 @@ export default function SlotMachine() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-4">
       {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
 
       <motion.div
@@ -65,14 +44,6 @@ export default function SlotMachine() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="flex justify-between mb-8">
-          <ScoreDisplay score={score} />
-          <SettingsPanel 
-            soundEnabled={soundEnabled}
-            onToggleSound={() => setSoundEnabled(!soundEnabled)}
-          />
-        </div>
-
         <div className="bg-white/80 backdrop-blur p-8 rounded-2xl shadow-xl">
           <div className="flex justify-center gap-4 mb-8">
             {reels.map((emoji, i) => (
